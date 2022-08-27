@@ -1,0 +1,14 @@
+.centered-div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top:3;
+    margin-left: 0.4rem;
+    margin-right: 27%;
+    height: 120vh;
+}
+.unvisited{
+    border: 1px solid rgb(175, 216, 248);
+    
+    background-color:white
+  }
