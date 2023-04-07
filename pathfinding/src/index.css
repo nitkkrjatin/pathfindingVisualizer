@@ -2,13 +2,48 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-top:3;
     margin-left: 0.4rem;
-    margin-right: 27%;
-    height: 120vh;
+    margin-right: 0.4rem;
+    /* height: 120vh; */
 }
-.unvisited{
+.node{
     border: 1px solid rgb(175, 216, 248);
     
     background-color:white
   }
+  .node-visited{
+    background-color: blue;
+  }
+  .node-finish{
+    background-color: red;
+  }
+  .node-start{
+    background-color: green;
+  }
+  .dropdown-menu{
+    background-color: #343a40;
+  }
+  #btn:hover{
+    color: #16a085;
+  }
+  #btn{
+    color: white;
+    font-weight: bold;
+  }
+  #drop{
+    color:white
+  }
+
+  #drop:hover{
+    color: #16a085;
+  }
+
+  #item{
+    color:#343a40;
+    background-color: white;
+  }
+  #item:hover{
+    background-color: #16a085;
+    color: white;
+  }
+  

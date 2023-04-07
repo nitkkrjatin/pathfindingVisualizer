@@ -17,9 +17,15 @@ const PathfindingVisualizer = () => {
                 <td
                   key={`${rowIdx}-${nodeIdx}`}
                   id={`${rowIdx}-${nodeIdx}`}
-                  className={
-                    nodes[rowIdx][nodeIdx].unvisited ? 'unvisited' : 'visited'
-                  }
+                  className={`node ${
+                    nodes[rowIdx][nodeIdx].isFinish
+                      ? 'node-finish'
+                      : nodes[rowIdx][nodeIdx].isStart
+                      ? 'node-start'
+                      : nodes[rowIdx][nodeIdx].isVisited
+                      ? 'node-visited'
+                      : ''
+                  }`}
                 ></td>
               ))}
             </tr>
