@@ -13,6 +13,10 @@ for (let row = 0; row < 21; row++) {
       isFinish: row === 10 && col === 44,
       unvisited: true,
       isVisited: false,
+      isWall: false,
+      onmousedown,
+      onmouseup,
+      onmouseenter,
     }
     currentRow.push(currentNode)
   }
@@ -32,6 +36,10 @@ const createGrid = () => {
         isFinish: row === 10 && col === 44,
         unvisited: true,
         isVisited: false,
+        isWall: false,
+        onmousedown,
+        onmouseup,
+        onmouseenter,
       }
       currentRow.push(currentNode)
     }
@@ -46,15 +54,28 @@ const speed = localStorage.getItem('speed')
   ? localStorage.getItem('speed')
   : 'average'
 const intialState = {
-  nodes,
+  nodes: createGrid(),
   algo: algo,
   speed: speed,
   isLoading: false,
+  mouseIsPressed: false,
+  doingAnimation: false,
 }
 
-export const update = createAsyncThunk('grid', (node) => {
+export const update = createAsyncThunk('grid/update', (node) => {
   return node
 })
+
+export const updateMouse = createAsyncThunk('grid/updateMouse', (val) => {
+  return val
+})
+
+export const updateAnimationState = createAsyncThunk(
+  'grid/updateAnimationState',
+  (val) => {
+    return val
+  }
+)
 
 const gridSlice = createSlice({
   name: 'grid',
@@ -64,6 +85,8 @@ const gridSlice = createSlice({
       state.nodes = createGrid()
       state.algo = localStorage.getItem('algo')
       state.speed = localStorage.getItem('speed')
+      state.doingAnimation = false
+      state.mouseIsPressed = false
     },
   },
   extraReducers: (builder) => {
@@ -73,6 +96,12 @@ const gridSlice = createSlice({
       })
       .addCase(update.pending, (state) => {
         state.isLoading = true
+      })
+      .addCase(updateMouse.fulfilled, (state, action) => {
+        state.mouseIsPressed = action.payload
+      })
+      .addCase(updateAnimationState.fulfilled, (state, action) => {
+        state.doingAnimation = action.payload
       })
   },
 })

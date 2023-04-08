@@ -20,6 +20,9 @@
   .node-start{
     background-color: green;
   }
+  .node-wall {
+    background-color: rgb(12, 53, 71);
+  }
   .dropdown-menu{
     background-color: #343a40;
   }

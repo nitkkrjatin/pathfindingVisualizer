@@ -1,11 +1,41 @@
 import React from 'react'
 import { Table } from 'react-bootstrap'
 import { useSelector, useDispatch } from 'react-redux'
-import { reset } from '../features/grid/gridSlice'
+import { update, updateMouse } from '../features/grid/gridSlice'
 
 const PathfindingVisualizer = () => {
   const dispatch = useDispatch()
-  const { nodes } = useSelector((state) => state.grid)
+  const { nodes, mouseIsPressed, doingAnimation } = useSelector(
+    (state) => state.grid
+  )
+
+  const handleMouseDown = (node) => {
+    if (doingAnimation) return
+    const row = node.target.attributes.i.value
+    const col = node.target.attributes.j.value
+    const newNode = {
+      ...nodes[row][col],
+      isWall: !nodes[row][col].isWall,
+    }
+    dispatch(updateMouse(true))
+    dispatch(update(newNode))
+  }
+
+  const handleMouseEnter = (node) => {
+    if (!mouseIsPressed || doingAnimation) return
+    const row = node.target.attributes.i.value
+    const col = node.target.attributes.j.value
+    const newNode = {
+      ...nodes[row][col],
+      isWall: !nodes[row][col].isWall,
+    }
+    dispatch(update(newNode))
+  }
+
+  const handleMouseUp = () => {
+    if (doingAnimation) return
+    dispatch(updateMouse(false))
+  }
 
   return (
     <div className='centered-div py-3'>
@@ -17,6 +47,8 @@ const PathfindingVisualizer = () => {
                 <td
                   key={`${rowIdx}-${nodeIdx}`}
                   id={`${rowIdx}-${nodeIdx}`}
+                  i={rowIdx}
+                  j={nodeIdx}
                   className={`node ${
                     nodes[rowIdx][nodeIdx].isFinish
                       ? 'node-finish'
@@ -24,8 +56,13 @@ const PathfindingVisualizer = () => {
                       ? 'node-start'
                       : nodes[rowIdx][nodeIdx].isVisited
                       ? 'node-visited'
+                      : node.isWall
+                      ? 'node-wall'
                       : ''
                   }`}
+                  onMouseDown={(node) => handleMouseDown(node)}
+                  onMouseEnter={(node) => handleMouseEnter(node)}
+                  onMouseUp={() => handleMouseUp()}
                 ></td>
               ))}
             </tr>

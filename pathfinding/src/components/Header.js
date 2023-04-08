@@ -1,7 +1,7 @@
 import { LinkContainer } from 'react-router-bootstrap'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { reset, update } from '../features/grid/gridSlice'
+import { reset, update, updateAnimationState } from '../features/grid/gridSlice'
 import { Navbar, NavDropdown, Nav, Container, Button } from 'react-bootstrap'
 import { dijkstra } from '../algorithms'
 
@@ -35,17 +35,20 @@ const Header = () => {
           isVisited: true,
         }
         dispatch(update(newNode))
-      }, 20 * i)
+      }, 15 * i)
     }
   }
 
   const visualizeDijkstra = () => {
+    if (grid.doingAnimation) return
     const path = dijkstra(grid.nodes)
-    dispatch(reset())
+    dispatch(updateAnimationState(true))
     animate(path)
+    dispatch(updateAnimationState(false))
   }
 
   const clear = () => {
+    if (grid.doingAnimation) return
     dispatch(reset())
   }
 

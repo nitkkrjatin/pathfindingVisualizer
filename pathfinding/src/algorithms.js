@@ -7,14 +7,7 @@ export const dijkstra = (grid) => {
     let curr = []
     for (let j = 0; j < grid[0].length; j++) {
       let node = {
-        row: grid[i][j].row,
-        col: grid[i][j].col,
-        distance: 10000,
-        prev: null,
-        isStart: grid[i][j].isStart,
-        isFinish: grid[i][j].isFinish,
-        unvisited: true,
-        isVisited: false,
+        ...grid[i][j],
       }
       curr.push(node)
       if (grid[i][j].isStart) start = node
