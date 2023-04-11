@@ -39,7 +39,7 @@ const PathfindingVisualizer = () => {
 
   return (
     <div className='centered-div py-3'>
-      <Table bgcolor='sky blue' className='table-sm'>
+      <Table className='table-sm'>
         <tbody>
           {nodes.map((row, rowIdx) => (
             <tr key={rowIdx} id={rowIdx}>

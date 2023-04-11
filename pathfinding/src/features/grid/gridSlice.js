@@ -1,9 +1,12 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, createAction } from '@reduxjs/toolkit'
 
-const nodes = []
-for (let row = 0; row < 21; row++) {
+export const updateAnimationState = createAction('grid/updateAnimationState')
+export const update = createAction('grid/update')
+export const updateMouse = createAction('grid / updateMouse')
+const grid = []
+for (let row = 0; row < 22; row++) {
   const currentRow = []
-  for (let col = 0; col < 45; col++) {
+  for (let col = 0; col < 60; col++) {
     const currentNode = {
       row,
       col,
@@ -14,39 +17,33 @@ for (let row = 0; row < 21; row++) {
       unvisited: true,
       isVisited: false,
       isWall: false,
-      onmousedown,
-      onmouseup,
-      onmouseenter,
     }
     currentRow.push(currentNode)
   }
-  nodes.push(currentRow)
+  grid.push(currentRow)
 }
-const createGrid = () => {
-  const newGrid = []
-  for (let row = 0; row < 21; row++) {
-    const currentRow = []
-    for (let col = 0; col < 45; col++) {
-      const currentNode = {
-        row,
-        col,
-        distance: 10000,
-        prev: null,
-        isStart: row === 10 && col === 5,
-        isFinish: row === 10 && col === 44,
-        unvisited: true,
-        isVisited: false,
-        isWall: false,
-        onmousedown,
-        onmouseup,
-        onmouseenter,
-      }
-      currentRow.push(currentNode)
-    }
-    newGrid.push(currentRow)
-  }
-  return newGrid
-}
+// const createGrid = () => {
+//   const newGrid = []
+//   for (let row = 0; row < 22; row++) {
+//     const currentRow = []
+//     for (let col = 0; col < 60; col++) {
+//       const currentNode = {
+//         row,
+//         col,
+//         distance: 10000,
+//         prev: null,
+//         isStart: row === 10 && col === 5,
+//         isFinish: row === 10 && col === 44,
+//         unvisited: true,
+//         isVisited: false,
+//         isWall: false,
+//       }
+//       currentRow.push(currentNode)
+//     }
+//     newGrid.push(currentRow)
+//   }
+//   return newGrid
+// }
 const algo = localStorage.getItem('algo')
   ? localStorage.getItem('algo')
   : 'dijkstra'
@@ -54,35 +51,19 @@ const speed = localStorage.getItem('speed')
   ? localStorage.getItem('speed')
   : 'average'
 const intialState = {
-  nodes: createGrid(),
+  nodes: grid,
   algo: algo,
   speed: speed,
-  isLoading: false,
   mouseIsPressed: false,
   doingAnimation: false,
 }
-
-export const update = createAsyncThunk('grid/update', (node) => {
-  return node
-})
-
-export const updateMouse = createAsyncThunk('grid/updateMouse', (val) => {
-  return val
-})
-
-export const updateAnimationState = createAsyncThunk(
-  'grid/updateAnimationState',
-  (val) => {
-    return val
-  }
-)
 
 const gridSlice = createSlice({
   name: 'grid',
   initialState: intialState,
   reducers: {
     reset: (state) => {
-      state.nodes = createGrid()
+      state.nodes = grid
       state.algo = localStorage.getItem('algo')
       state.speed = localStorage.getItem('speed')
       state.doingAnimation = false
@@ -91,16 +72,13 @@ const gridSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(update.fulfilled, (state, action) => {
+      .addCase(update, (state, action) => {
         state.nodes[action.payload.row][action.payload.col] = action.payload
       })
-      .addCase(update.pending, (state) => {
-        state.isLoading = true
-      })
-      .addCase(updateMouse.fulfilled, (state, action) => {
+      .addCase(updateMouse, (state, action) => {
         state.mouseIsPressed = action.payload
       })
-      .addCase(updateAnimationState.fulfilled, (state, action) => {
+      .addCase(updateAnimationState, (state, action) => {
         state.doingAnimation = action.payload
       })
   },

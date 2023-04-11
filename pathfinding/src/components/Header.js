@@ -1,7 +1,7 @@
 import { LinkContainer } from 'react-router-bootstrap'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { reset, update, updateAnimationState } from '../features/grid/gridSlice'
+import { reset } from '../features/grid/gridSlice'
 import { Navbar, NavDropdown, Nav, Container, Button } from 'react-bootstrap'
 import { dijkstra } from '../algorithms'
 
@@ -25,30 +25,46 @@ const Header = () => {
       dispatch(reset())
     }
   }
-
+  let doingAnimation = false
   const animate = (path) => {
     for (let i = 0; i < path.length; i++) {
       setTimeout(() => {
-        const node = path[i]
-        const newNode = {
-          ...node,
-          isVisited: true,
+        console.log(doingAnimation)
+        if (i === path.length - 1) {
+          doingAnimation = false
         }
-        dispatch(update(newNode))
-      }, 15 * i)
+        const node = path[i]
+        document.getElementById(`${node.row}-${node.col}`).className =
+          'node node-visited'
+      }, 10 * i)
     }
   }
 
   const visualizeDijkstra = () => {
-    if (grid.doingAnimation) return
+    if (doingAnimation) return
     const path = dijkstra(grid.nodes)
-    dispatch(updateAnimationState(true))
+    doingAnimation = true
+    console.log(doingAnimation)
     animate(path)
-    dispatch(updateAnimationState(false))
   }
 
   const clear = () => {
-    if (grid.doingAnimation) return
+    console.log(doingAnimation)
+    if (doingAnimation) return
+    const sr = 10
+    const sc = 5
+    const er = 10
+    const ec = 44
+    for (let i = 0; i < 22; i++) {
+      for (let j = 0; j < 60; j++) {
+        document.getElementById(`${i}-${j}`).className =
+          i === sr && j === sc
+            ? 'node node-start'
+            : i === er && j === ec
+            ? 'node node-finish'
+            : 'node'
+      }
+    }
     dispatch(reset())
   }
 
