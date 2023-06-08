@@ -1,8 +1,10 @@
+let nodes = []
+
 export const dijkstra = (grid) => {
   const ans = []
   let start
   let end
-  let nodes = []
+  nodes = []
   for (let i = 0; i < grid.length; i++) {
     let curr = []
     for (let j = 0; j < grid[0].length; j++) {
@@ -15,12 +17,12 @@ export const dijkstra = (grid) => {
     }
     nodes.push(curr)
   }
-  return dijkstraAlgo(nodes, start, end, ans)
+  return dijkstraAlgo(start, end, ans)
 }
 
-const dijkstraAlgo = (nodes, start, finish, ans) => {
+const dijkstraAlgo = (start, finish, ans) => {
   start.distance = 0
-  let unvisitedNodes = getAllNodes(nodes)
+  let unvisitedNodes = getAllNodes()
   while (!!unvisitedNodes.length) {
     unvisitedNodes.sort((nodeA, nodeB) => nodeA.distance - nodeB.distance)
     let curr = unvisitedNodes.shift()
@@ -29,19 +31,19 @@ const dijkstraAlgo = (nodes, start, finish, ans) => {
     curr.unvisited = false
     ans.push(curr)
     if (curr === finish) return ans
-    update(nodes, curr)
+    updateNodes(curr)
   }
 }
 
-const update = (nodes, curr) => {
-  const unvisitedNeighbors = getNeighbors(nodes, curr)
+const updateNodes = (curr) => {
+  const unvisitedNeighbors = getNeighbors(curr)
   for (const neighbors of unvisitedNeighbors) {
     neighbors.distance = curr.distance + 1
     neighbors.prev = curr
   }
 }
 
-const getNeighbors = (nodes, curr) => {
+const getNeighbors = (curr) => {
   const arr = []
   const { row, col } = curr
   if (row > 0) arr.push(nodes[row - 1][col])
@@ -51,12 +53,30 @@ const getNeighbors = (nodes, curr) => {
   return arr.filter((n) => n.unvisited)
 }
 
-const getAllNodes = (grid) => {
-  const nodes = []
-  for (const row of grid) {
+const getAllNodes = () => {
+  const ans = []
+  for (const row of nodes) {
     for (const node of row) {
-      nodes.push(node)
+      ans.push(node)
     }
   }
-  return nodes
+  return ans
+}
+
+export const getShortestPath = () => {
+  let ans = []
+  let curr = null
+  for (const row of nodes) {
+    for (const node of row) {
+      if (node.isFinish) {
+        curr = node
+        break
+      }
+    }
+  }
+  while (curr !== null) {
+    ans.unshift(curr)
+    curr = curr.prev
+  }
+  return ans
 }

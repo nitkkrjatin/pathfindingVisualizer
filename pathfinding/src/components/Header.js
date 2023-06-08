@@ -3,14 +3,13 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { reset } from '../features/grid/gridSlice'
 import { Navbar, NavDropdown, Nav, Container, Button } from 'react-bootstrap'
-import { dijkstra } from '../algorithms'
+import { dijkstra, getShortestPath } from '../algorithms'
 
 const Header = () => {
   let algo = localStorage.getItem('algo')
   let speed = localStorage.getItem('speed')
   const dispatch = useDispatch()
   const { grid } = useSelector((state) => state)
-
   const onChange = (alg) => {
     return () => {
       localStorage.setItem('algo', alg)
@@ -26,13 +25,17 @@ const Header = () => {
     }
   }
   let doingAnimation = false
-  const animate = (path) => {
-    for (let i = 0; i < path.length; i++) {
+  const animate = (path, shortestPath) => {
+    for (let i = 0; i <= path.length; i++) {
+      if (i === path.length) {
+        setTimeout(() => {
+          console.log(doingAnimation)
+          animateShortestPath(shortestPath)
+        }, 10 * i)
+        return
+      }
       setTimeout(() => {
         console.log(doingAnimation)
-        if (i === path.length - 1) {
-          doingAnimation = false
-        }
         const node = path[i]
         document.getElementById(`${node.row}-${node.col}`).className =
           'node node-visited'
@@ -40,12 +43,43 @@ const Header = () => {
     }
   }
 
+  const animateShortestPath = (shortestPath) => {
+    for (let i = 0; i < shortestPath.length; i++) {
+      setTimeout(() => {
+        console.log(doingAnimation)
+        if (i === shortestPath.length - 1) {
+          doingAnimation = false
+        }
+        const node = shortestPath[i]
+        document.getElementById(`${node.row}-${node.col}`).className =
+          'node node-shortest-path'
+      }, 30 * i)
+    }
+  }
+
   const visualizeDijkstra = () => {
     if (doingAnimation) return
+    const sr = 10
+    const sc = 5
+    const er = 10
+    const ec = 44
+    for (let i = 0; i < 22; i++) {
+      for (let j = 0; j < 60; j++) {
+        document.getElementById(`${i}-${j}`).className =
+          i === sr && j === sc
+            ? 'node node-start'
+            : i === er && j === ec
+            ? 'node node-finish'
+            : grid.nodes[i][j].isWall
+            ? 'node node-wall'
+            : 'node'
+      }
+    }
     const path = dijkstra(grid.nodes)
+    const shortestPath = getShortestPath()
     doingAnimation = true
     console.log(doingAnimation)
-    animate(path)
+    animate(path, shortestPath)
   }
 
   const clear = () => {
