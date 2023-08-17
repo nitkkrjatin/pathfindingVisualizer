@@ -4,16 +4,16 @@ export const updateAnimationState = createAction('grid/updateAnimationState')
 export const update = createAction('grid/update')
 export const updateMouse = createAction('grid / updateMouse')
 const grid = []
-for (let row = 0; row < 22; row++) {
+for (let row = 0; row < 25; row++) {
   const currentRow = []
-  for (let col = 0; col < 60; col++) {
+  for (let col = 0; col < 57; col++) {
     const currentNode = {
       row,
       col,
       distance: 10000,
       prev: null,
       isStart: row === 10 && col === 5,
-      isFinish: row === 10 && col === 44,
+      isFinish: row === 10 && col === 38,
       unvisited: true,
       isVisited: false,
       isWall: false,

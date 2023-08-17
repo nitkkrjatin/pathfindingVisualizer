@@ -62,9 +62,9 @@ const Header = () => {
     const sr = 10
     const sc = 5
     const er = 10
-    const ec = 44
-    for (let i = 0; i < 22; i++) {
-      for (let j = 0; j < 60; j++) {
+    const ec = 38
+    for (let i = 0; i < 25; i++) {
+      for (let j = 0; j < 57; j++) {
         document.getElementById(`${i}-${j}`).className =
           i === sr && j === sc
             ? 'node node-start'
@@ -88,9 +88,9 @@ const Header = () => {
     const sr = 10
     const sc = 5
     const er = 10
-    const ec = 44
-    for (let i = 0; i < 22; i++) {
-      for (let j = 0; j < 60; j++) {
+    const ec = 38
+    for (let i = 0; i < 25; i++) {
+      for (let j = 0; j < 57; j++) {
         document.getElementById(`${i}-${j}`).className =
           i === sr && j === sc
             ? 'node node-start'
