@@ -1,16 +1,22 @@
 import { createSlice, createAction } from '@reduxjs/toolkit'
+import { gridSize } from '../../constants/Constants'
 
 export const updateAnimationState = createAction('grid/updateAnimationState')
 export const update = createAction('grid/update')
 export const updateMouse = createAction('grid / updateMouse')
 const grid = []
-for (let row = 0; row < 25; row++) {
+for (let row = 0; row < gridSize.rowSize; row++) {
   const currentRow = []
-  for (let col = 0; col < 57; col++) {
+  for (let col = 0; col < gridSize.colSize; col++) {
     const currentNode = {
       row,
       col,
       distance: 10000,
+      g:10000,
+      f:0,
+      h:0,
+      parent:null,
+      close:false,
       prev: null,
       isStart: row === 10 && col === 5,
       isFinish: row === 10 && col === 38,
@@ -47,9 +53,7 @@ for (let row = 0; row < 25; row++) {
 const algo = localStorage.getItem('algo')
   ? localStorage.getItem('algo')
   : 'dijkstra'
-const speed = localStorage.getItem('speed')
-  ? localStorage.getItem('speed')
-  : 'average'
+const speed = localStorage.getItem('speed') ?? "fast"
 const intialState = {
   nodes: grid,
   algo: algo,
@@ -65,7 +69,7 @@ const gridSlice = createSlice({
     reset: (state) => {
       state.nodes = grid
       state.algo = localStorage.getItem('algo')
-      state.speed = localStorage.getItem('speed')
+      state.speed = localStorage.getItem('speed') ?? "fast"
       state.doingAnimation = false
       state.mouseIsPressed = false
     },

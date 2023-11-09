@@ -3,11 +3,14 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { reset } from '../features/grid/gridSlice'
 import { Navbar, NavDropdown, Nav, Container, Button } from 'react-bootstrap'
-import { dijkstra, getShortestPath } from '../algorithms'
+import { pathfindingAlgo, getShortestPath } from '../algorithms'
+import { gridSize, speedConstants } from '../constants/Constants'
 
 const Header = () => {
   let algo = localStorage.getItem('algo')
-  let speed = localStorage.getItem('speed')
+  // console.log(localStorage.getItem('speed'))
+  let speed = localStorage.getItem('speed') ?? "fast"
+  let sp = speedConstants[speed]
   const dispatch = useDispatch()
   const { grid } = useSelector((state) => state)
   const onChange = (alg) => {
@@ -19,7 +22,9 @@ const Header = () => {
   }
   const onChangeSpeed = (s) => {
     return () => {
+      sp = speedConstants[s]
       localStorage.setItem('speed', s)
+      // console.log(sp)
       speed = s
       dispatch(reset())
     }
@@ -27,33 +32,34 @@ const Header = () => {
   let doingAnimation = false
   const animate = (path, shortestPath) => {
     for (let i = 0; i <= path.length; i++) {
+      // console.log({ sp })
       if (i === path.length) {
         setTimeout(() => {
-          console.log(doingAnimation)
+          // console.log(doingAnimation)
           animateShortestPath(shortestPath)
-        }, 10 * i)
+        }, sp * i)
         return
       }
       setTimeout(() => {
-        console.log(doingAnimation)
+        // console.log(doingAnimation)
         const node = path[i]
         document.getElementById(`${node.row}-${node.col}`).className =
           'node node-visited'
-      }, 10 * i)
+      }, sp * i)
     }
   }
 
   const animateShortestPath = (shortestPath) => {
     for (let i = 0; i < shortestPath.length; i++) {
       setTimeout(() => {
-        console.log(doingAnimation)
+        // console.log(doingAnimation)
         if (i === shortestPath.length - 1) {
           doingAnimation = false
         }
         const node = shortestPath[i]
         document.getElementById(`${node.row}-${node.col}`).className =
           'node node-shortest-path'
-      }, 30 * i)
+      }, speedConstants.path * i)
     }
   }
 
@@ -63,40 +69,40 @@ const Header = () => {
     const sc = 5
     const er = 10
     const ec = 38
-    for (let i = 0; i < 25; i++) {
-      for (let j = 0; j < 57; j++) {
+    for (let i = 0; i < gridSize.rowSize; i++) {
+      for (let j = 0; j < gridSize.colSize; j++) {
         document.getElementById(`${i}-${j}`).className =
           i === sr && j === sc
             ? 'node node-start'
             : i === er && j === ec
-            ? 'node node-finish'
-            : grid.nodes[i][j].isWall
-            ? 'node node-wall'
-            : 'node'
+              ? 'node node-finish'
+              : grid.nodes[i][j].isWall
+                ? 'node node-wall'
+                : 'node'
       }
     }
-    const path = dijkstra(grid.nodes)
+    const path = pathfindingAlgo(grid.nodes, algo)
     const shortestPath = getShortestPath()
     doingAnimation = true
-    console.log(doingAnimation)
+    // console.log(doingAnimation)
     animate(path, shortestPath)
   }
 
   const clear = () => {
-    console.log(doingAnimation)
+    // console.log(doingAnimation)
     if (doingAnimation) return
     const sr = 10
     const sc = 5
     const er = 10
     const ec = 38
-    for (let i = 0; i < 25; i++) {
-      for (let j = 0; j < 57; j++) {
+    for (let i = 0; i < gridSize.rowSize; i++) {
+      for (let j = 0; j < gridSize.colSize; j++) {
         document.getElementById(`${i}-${j}`).className =
           i === sr && j === sc
             ? 'node node-start'
             : i === er && j === ec
-            ? 'node node-finish'
-            : 'node'
+              ? 'node node-finish'
+              : 'node'
       }
     }
     dispatch(reset())

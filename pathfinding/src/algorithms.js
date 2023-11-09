@@ -1,6 +1,8 @@
+import { algorithmsConstant } from "./constants/Constants"
+
 let nodes = []
 
-export const dijkstra = (grid) => {
+export const pathfindingAlgo = (grid, algo) => {
   const ans = []
   let start
   let end
@@ -17,13 +19,14 @@ export const dijkstra = (grid) => {
     }
     nodes.push(curr)
   }
-  return dijkstraAlgo(start, end, ans)
+  if (algo === algorithmsConstant.aStar) return aStar(start, end, ans)
+  if (algo === algorithmsConstant.dijkstra) return dijkstra(start, end, ans)
 }
 
-const dijkstraAlgo = (start, finish, ans) => {
+const dijkstra = (start, finish, ans) => {
   start.distance = 0
   let unvisitedNodes = getAllNodes()
-  while (!!unvisitedNodes.length) {
+  while (unvisitedNodes.length) {
     unvisitedNodes.sort((nodeA, nodeB) => nodeA.distance - nodeB.distance)
     let curr = unvisitedNodes.shift()
     if (curr.isWall) continue
@@ -40,6 +43,7 @@ const updateNodes = (curr) => {
   for (const neighbors of unvisitedNeighbors) {
     neighbors.distance = curr.distance + 1
     neighbors.prev = curr
+    neighbors.parent = curr
   }
 }
 
@@ -74,9 +78,61 @@ export const getShortestPath = () => {
       }
     }
   }
-  while (curr !== null) {
+  while (curr.parent) {
     ans.unshift(curr)
-    curr = curr.prev
+    curr = curr.parent
+  }
+  ans.unshift(curr)
+  return ans
+}
+
+const aStar = (start, end, ans) => {
+  const open = []
+  open.push(start)
+  ans.push(start)
+  while (open.length) {
+    let currNode = open[0]
+    let idx = 0
+    for (let i = 0; i < open.length; i++) {
+      if (open[i].f < currNode.f) {
+        currNode = open[i]
+        idx = i
+      }
+    }
+    if (currNode === end) {
+      return ans
+    }
+    open.splice(idx, 1)
+    currNode.close = true
+    // ans.push(currNode)
+    const neighbors = getNeighbors(currNode)
+    for (const neighnor of neighbors) {
+      if (neighnor.isWall || neighnor.close) {
+        continue
+      }
+      const gScore = currNode.g = 1
+      let isBest = false
+      if (neighnor.unvisited) {
+        isBest = true
+        neighnor.h = heuristic(neighnor, end)
+        neighnor.unvisited = false
+        open.push(neighnor)
+        ans.push(neighnor)
+      }
+      if (gScore < neighnor.g) {
+        isBest = true
+      }
+      
+      if (isBest) {
+        neighnor.parent = currNode
+        neighnor.g = gScore
+        neighnor.f = neighnor.g + neighnor.h
+      }
+    }
   }
   return ans
+}
+
+const heuristic = (node1, node2) => {
+  return (Math.abs(node2.row - node1.row) + Math.abs(node2.col - node1.col))
 }
