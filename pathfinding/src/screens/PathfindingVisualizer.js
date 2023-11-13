@@ -17,6 +17,7 @@ const PathfindingVisualizer = () => {
       ...nodes[row][col],
       isWall: !nodes[row][col].isWall,
     }
+    if(newNode.isFinish||newNode.isStart) return
     dispatch(updateMouse(true))
     dispatch(update(newNode))
   }
@@ -29,6 +30,7 @@ const PathfindingVisualizer = () => {
       ...nodes[row][col],
       isWall: !nodes[row][col].isWall,
     }
+    if(newNode.isFinish||newNode.isStart) return
     dispatch(update(newNode))
   }
 

@@ -12,7 +12,7 @@ for (let row = 0; row < gridSize.rowSize; row++) {
       row,
       col,
       distance: 10000,
-      g:10000,
+      g:0,
       f:0,
       h:0,
       parent:null,

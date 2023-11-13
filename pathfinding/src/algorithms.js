@@ -39,7 +39,8 @@ const dijkstra = (start, finish, ans) => {
 }
 
 const updateNodes = (curr) => {
-  const unvisitedNeighbors = getNeighbors(curr)
+  let unvisitedNeighbors = getNeighbors(curr)
+  unvisitedNeighbors=unvisitedNeighbors.filter((n) => n.unvisited)
   for (const neighbors of unvisitedNeighbors) {
     neighbors.distance = curr.distance + 1
     neighbors.prev = curr
@@ -54,7 +55,7 @@ const getNeighbors = (curr) => {
   if (row < nodes.length - 1) arr.push(nodes[row + 1][col])
   if (col > 0) arr.push(nodes[row][col - 1])
   if (col < nodes[0].length - 1) arr.push(nodes[row][col + 1])
-  return arr.filter((n) => n.unvisited)
+  return arr
 }
 
 const getAllNodes = () => {
@@ -89,7 +90,6 @@ export const getShortestPath = () => {
 const aStar = (start, end, ans) => {
   const open = []
   open.push(start)
-  ans.push(start)
   while (open.length) {
     let currNode = open[0]
     let idx = 0
@@ -98,26 +98,31 @@ const aStar = (start, end, ans) => {
         currNode = open[i]
         idx = i
       }
+      if(open[i].f===currNode.f){
+        if(open[i].h<currNode.h){
+          currNode=open[i]
+          idx=i
+        }
+      }
     }
     if (currNode === end) {
       return ans
     }
     open.splice(idx, 1)
     currNode.close = true
-    // ans.push(currNode)
+    ans.push(currNode)
     const neighbors = getNeighbors(currNode)
     for (const neighnor of neighbors) {
       if (neighnor.isWall || neighnor.close) {
         continue
       }
-      const gScore = currNode.g = 1
+      const gScore = currNode.g + 1
       let isBest = false
       if (neighnor.unvisited) {
         isBest = true
         neighnor.h = heuristic(neighnor, end)
         neighnor.unvisited = false
         open.push(neighnor)
-        ans.push(neighnor)
       }
       if (gScore < neighnor.g) {
         isBest = true
