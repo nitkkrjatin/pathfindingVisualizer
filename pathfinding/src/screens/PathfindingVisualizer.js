@@ -1,11 +1,11 @@
 import React from 'react'
 import { Table } from 'react-bootstrap'
 import { useSelector, useDispatch } from 'react-redux'
-import { update, updateMouse } from '../features/grid/gridSlice'
+import { update, updateMouse, updateStatus } from '../features/grid/gridSlice'
 
 const PathfindingVisualizer = () => {
   const dispatch = useDispatch()
-  const { nodes, mouseIsPressed, doingAnimation } = useSelector(
+  const { nodes, mouseIsPressed, doingAnimation,status } = useSelector(
     (state) => state.grid
   )
 
@@ -13,11 +13,30 @@ const PathfindingVisualizer = () => {
     if (doingAnimation) return
     const row = node.target.attributes.i.value
     const col = node.target.attributes.j.value
+    if(nodes[row][col].isStart){
+      dispatch(updateStatus("start"))
+      const newNode = {
+        ...nodes[row][col],
+        isStart: false,
+      }
+      dispatch(updateMouse(true))
+      dispatch(update(newNode))
+      return
+    }
+    if(nodes[row][col].isFinish){
+      dispatch(updateStatus("end"))
+      const newNode = {
+        ...nodes[row][col],
+        isFinish: false,
+      }
+      dispatch(updateMouse(true))
+      dispatch(update(newNode))
+      return
+    }
     const newNode = {
       ...nodes[row][col],
       isWall: !nodes[row][col].isWall,
     }
-    if(newNode.isFinish||newNode.isStart) return
     dispatch(updateMouse(true))
     dispatch(update(newNode))
   }
@@ -26,6 +45,9 @@ const PathfindingVisualizer = () => {
     if (!mouseIsPressed || doingAnimation) return
     const row = node.target.attributes.i.value
     const col = node.target.attributes.j.value
+    if(status!=="normal"){
+      return
+    }
     const newNode = {
       ...nodes[row][col],
       isWall: !nodes[row][col].isWall,
@@ -34,8 +56,26 @@ const PathfindingVisualizer = () => {
     dispatch(update(newNode))
   }
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (node) => {
     if (doingAnimation) return
+    const row = node.target.attributes.i.value
+    const col = node.target.attributes.j.value
+    if(status==="start"){
+      const newNode = {
+        ...nodes[row][col],
+        isStart: true,
+      }
+      dispatch(update(newNode))
+      dispatch(updateStatus("normal"))
+    }
+    if(status==="end"){
+      const newNode = {
+        ...nodes[row][col],
+        isFinish: true,
+      }
+      dispatch(update(newNode))
+      dispatch(updateStatus("normal"))
+    }
     dispatch(updateMouse(false))
   }
 
@@ -64,7 +104,7 @@ const PathfindingVisualizer = () => {
                   }`}
                   onMouseDown={(node) => handleMouseDown(node)}
                   onMouseEnter={(node) => handleMouseEnter(node)}
-                  onMouseUp={() => handleMouseUp()}
+                  onMouseUp={(node) => handleMouseUp(node)}
                 ></td>
               ))}
             </tr>

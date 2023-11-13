@@ -56,12 +56,26 @@
     color: white;
     font-weight: bold;
   }
+  #btn-d:hover{
+    color: red;
+  }
+  #btn-d{
+    color: red;
+    font-weight: bold;
+  }
   #drop{
     color:white
   }
 
   #drop:hover{
     color: #16a085;
+  }
+  #drop-d{
+    color:white
+  }
+
+  #drop-d:hover{
+    color: red;
   }
 
   #item{
@@ -70,6 +84,14 @@
   }
   #item:hover{
     background-color: #16a085;
+    color: white;
+  }
+  #item-d{
+    color:#343a40;
+    background-color: white;
+  }
+  #item-d:hover{
+    background-color: red;
     color: white;
   }
 

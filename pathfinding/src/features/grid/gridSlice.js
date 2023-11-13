@@ -3,7 +3,10 @@ import { gridSize } from '../../constants/Constants'
 
 export const updateAnimationState = createAction('grid/updateAnimationState')
 export const update = createAction('grid/update')
-export const updateMouse = createAction('grid / updateMouse')
+export const updateMouse = createAction('grid/updateMouse')
+export const updateStatus = createAction('grid/updateStatus')
+export const updateSpeed = createAction('grid/updateSpeed')
+export const updateAlgo = createAction('grid/updateAlgo')
 const grid = []
 for (let row = 0; row < gridSize.rowSize; row++) {
   const currentRow = []
@@ -12,11 +15,11 @@ for (let row = 0; row < gridSize.rowSize; row++) {
       row,
       col,
       distance: 10000,
-      g:0,
-      f:0,
-      h:0,
-      parent:null,
-      close:false,
+      g: 0,
+      f: 0,
+      h: 0,
+      parent: null,
+      close: false,
       prev: null,
       isStart: row === 10 && col === 5,
       isFinish: row === 10 && col === 38,
@@ -60,6 +63,7 @@ const intialState = {
   speed: speed,
   mouseIsPressed: false,
   doingAnimation: false,
+  status: "normal"
 }
 
 const gridSlice = createSlice({
@@ -72,6 +76,7 @@ const gridSlice = createSlice({
       state.speed = localStorage.getItem('speed') ?? "fast"
       state.doingAnimation = false
       state.mouseIsPressed = false
+      state.status = "normal"
     },
   },
   extraReducers: (builder) => {
@@ -84,6 +89,14 @@ const gridSlice = createSlice({
       })
       .addCase(updateAnimationState, (state, action) => {
         state.doingAnimation = action.payload
+      })
+      .addCase(updateStatus, (state, action) => {
+        state.status = action.payload
+      })
+      .addCase(updateSpeed, (state, action) => {
+        state.speed = action.payload
+      }).addCase(updateAlgo, (state, action) => {
+        state.algo = action.payload
       })
   },
 })
